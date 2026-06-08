@@ -33,7 +33,23 @@ export default function Home() {
     await supabase.from('questions').update({ vote: currentVote + 1 }).eq('id', id)
     fetchQuestions()
   }
+async function deleteQuestion(id) {
+  await supabase
+    .from('questions')
+    .delete()
+    .eq('id', id)
 
+  fetchQuestions()
+}
+
+async function deletePoll(id) {
+  await supabase
+    .from('polls')
+    .delete()
+    .eq('id', id)
+
+  fetchPolls()
+}
   async function fetchPolls() {
     const { data } = await supabase.from('polls').select('*').order('id', { ascending: false })
     setPolls(data || [])
@@ -120,15 +136,29 @@ export default function Home() {
                 style={{ backgroundColor: '#1e1e1e', border: '1px solid #333' }}
                 className="p-3 rounded">
                 <div className="flex justify-between items-center">
-                  <span className="text-white">❓ {q.text}</span>
+                <span className="text-white">❓ {q.text}</span>
+              
+                <div className="flex gap-2">
                   <button
-                    style={{ backgroundColor: '#2a2a2a', color: '#ffffff', border: '1px solid #444' }}
-                    className="text-sm px-3 py-1 rounded hover:bg-gray-600 ml-2"
+                    style={{
+                      backgroundColor: '#2a2a2a',
+                      color: '#ffffff',
+                      border: '1px solid #444'
+                    }}
+                    className="text-sm px-3 py-1 rounded hover:bg-gray-600"
                     onClick={() => voteQuestion(q.id, q.vote)}
                   >
                     👍 {q.vote}
                   </button>
+              
+                  <button
+                    className="bg-red-600 text-white text-sm px-3 py-1 rounded hover:bg-red-700"
+                    onClick={() => deleteQuestion(q.id)}
+                  >
+                    🗑 Delete
+                  </button>
                 </div>
+              </div>
 
                 {/* AI Answer Button */}
                 <button
@@ -189,21 +219,43 @@ export default function Home() {
         ) : (
           <div className="mt-2 space-y-4">
             {polls.map(poll => (
-              <div key={poll.id}
-                style={{ backgroundColor: '#1e1e1e', border: '1px solid #333' }}
-                className="p-4 rounded">
-                <p className="font-semibold mb-2 text-white">🗳️ {poll.poll_question}</p>
-                {[1, 2, 3, 4].map(n => poll[`option_${n}`] && (
-                  <button
-                    key={n}
-                    onClick={() => votePoll(poll.id, n)}
-                    style={{ backgroundColor: '#2a2a2a', border: '1px solid #444', color: '#ffffff' }}
-                    className="block w-full text-left p-2 rounded mb-1 hover:bg-gray-600"
-                  >
-                    {poll[`option_${n}`]} — <span className="text-blue-400 font-medium">{poll[`votes_${n}`]} votes</span>
-                  </button>
-                ))}
-              </div>
+              <div
+  key={poll.id}
+  style={{ backgroundColor: '#1e1e1e', border: '1px solid #333' }}
+  className="p-4 rounded"
+>
+  <p className="font-semibold mb-2 text-white">
+    🗳️ {poll.poll_question}
+  </p>
+
+  {[1, 2, 3, 4].map(
+    n =>
+      poll[`option_${n}`] && (
+        <button
+          key={n}
+          onClick={() => votePoll(poll.id, n)}
+          style={{
+            backgroundColor: '#2a2a2a',
+            border: '1px solid #444',
+            color: '#ffffff',
+          }}
+          className="block w-full text-left p-2 rounded mb-1 hover:bg-gray-600"
+        >
+          {poll[`option_${n}`]} —{" "}
+          <span className="text-blue-400 font-medium">
+            {poll[`votes_${n}`]} votes
+          </span>
+        </button>
+      )
+  )}
+
+  <button
+    onClick={() => deletePoll(poll.id)}
+    className="bg-red-600 text-white px-3 py-1 rounded mt-3 hover:bg-red-700"
+  >
+    🗑 Delete Poll
+  </button>
+</div>
             ))}
           </div>
         )}
