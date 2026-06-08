@@ -172,7 +172,7 @@ async function deletePoll(id) {
                         className="mt-2 text-sm bg-purple-700 text-white px-3 py-1 rounded hover:bg-purple-800"
                         onClick={() => askAI(q.id, q.text)}
                       >
-                        {loadingAI[q.id] ? '⏳ Thinking...' : '🤖 Ask AI'}
+                        {loadingAI[q.id] ? '⏳ Thinking...' : ' 🐱 Ask AI'}
                       </button>
               
                       {aiAnswers[q.id] && (
