@@ -125,40 +125,71 @@ async function deletePoll(id) {
           placeholder="🔍 Search questions..."
         />
 
-        {/* Asked Questions */}
-        <h3 className="mt-2 text-lg font-semibold mb-2 text-white">📋 Asked Questions</h3>
-        {filteredQuestions.length === 0 ? (
-          <p className="text-gray-500">No questions found.</p>
-        ) : (
-          <ul className="mt-2 space-y-3">
-            {filteredQuestions.map(q => (
-              <li key={q.id}
-                style={{ backgroundColor: '#1e1e1e', border: '1px solid #333' }}
-                className="p-3 rounded">
-                <div className="flex justify-between items-center">
-                <span className="text-white">❓ {q.text}</span>
+       {/* Asked Questions */}
+              <h3 className="mt-2 text-lg font-semibold mb-2 text-white">
+                📋 Asked Questions
+              </h3>
               
-                <div className="flex gap-2">
-                  <button
-                    style={{
-                      backgroundColor: '#2a2a2a',
-                      color: '#ffffff',
-                      border: '1px solid #444'
-                    }}
-                    className="text-sm px-3 py-1 rounded hover:bg-gray-600"
-                    onClick={() => voteQuestion(q.id, q.vote)}
-                  >
-                    👍 {q.vote}
-                  </button>
+              {filteredQuestions.length === 0 ? (
+                <p className="text-gray-500">No questions found.</p>
+              ) : (
+                <ul className="mt-2 space-y-3">
+                  {filteredQuestions.map((q) => (
+                    <li
+                      key={q.id}
+                      style={{
+                        backgroundColor: '#1e1e1e',
+                        border: '1px solid #333'
+                      }}
+                      className="p-3 rounded"
+                    >
+                      <div className="flex justify-between items-center">
+                        <span className="text-white">❓ {q.text}</span>
               
-                  <button
-                    className="bg-red-600 text-white text-sm px-3 py-1 rounded hover:bg-red-700"
-                    onClick={() => deleteQuestion(q.id)}
-                  >
-                    🗑 Delete
-                  </button>
-                </div>
-              </div>
+                        <div className="flex gap-2">
+                          <button
+                            style={{
+                              backgroundColor: '#2a2a2a',
+                              color: '#ffffff',
+                              border: '1px solid #444'
+                            }}
+                            className="text-sm px-3 py-1 rounded hover:bg-gray-600"
+                            onClick={() => voteQuestion(q.id, q.vote)}
+                          >
+                            👍 {q.vote}
+                          </button>
+              
+                          <button
+                            className="bg-red-600 text-white text-sm px-3 py-1 rounded hover:bg-red-700"
+                            onClick={() => deleteQuestion(q.id)}
+                          >
+                            🗑 Delete
+                          </button>
+                        </div>
+                      </div>
+              
+                      <button
+                        className="mt-2 text-sm bg-purple-700 text-white px-3 py-1 rounded hover:bg-purple-800"
+                        onClick={() => askAI(q.id, q.text)}
+                      >
+                        {loadingAI[q.id] ? '⏳ Thinking...' : '🤖 Ask AI'}
+                      </button>
+              
+                      {aiAnswers[q.id] && (
+                        <div
+                          style={{
+                            backgroundColor: '#2a1a3e',
+                            border: '1px solid #6b21a8'
+                          }}
+                          className="mt-2 p-3 rounded text-purple-200 text-sm"
+                        >
+                          🤖 <strong>AI Answer:</strong> {aiAnswers[q.id]}
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
 
                 {/* AI Answer Button */}
                 <button
